@@ -69,6 +69,7 @@ int main(int argc, char** argv) {
 	int prevCom = -1; //0 if On, 1 if Off
 	int8_t note = 0;
 	int freq[] = {16, 17, 18, 19, 21, 22, 23, 25, 26, 28, 29, 31, 33, 35, 37, 39, 41, 44, 46, 49, 52, 55, 58, 62, 65, 69, 73, 78, 82, 87, 93, 98, 104, 110, 117, 124, 131, 139, 147, 156, 165, 175, 185, 196, 208, 220, 233, 247, 262, 277, 294, 311, 330, 349, 370, 392, 415, 440, 466, 493, 523, 554, 587, 622, 659, 699, 740, 784, 831, 880, 932, 988, 1047, 1109, 1175, 1245, 1319, 1397, 1480, 1568, 1661, 1760, 1865, 1976, 2093, 2217, 2349, 2489, 2637, 2794, 2960, 3136, 3322, 3520, 3729, 3951, 4186, 4485, 4699, 4978, 5274, 5588, 5920, 6272, 6645, 7040, 7459, 7902};
+	fprintf(out_file, "PPQN is %" PRIu64 "\n", inp_midi.PPQN);
 	while (i < inp_statbuf.st_size) {
 		uint64_t dt = 0;
 		while (i < inp_statbuf.st_size && inp_file[i] & 0x80 != 0) {
@@ -116,6 +117,7 @@ int main(int argc, char** argv) {
 				case 0x51:
 					uint64_t tempo = ((uint64_t)inp_file[i+2]*256+(uint8_t)inp_file[i+3])*256+(uint8_t)inp_file[i+4];
 					bpm = 60000000.0/tempo;
+					fprintf(out_file, "BPM is %f\n", bpm);
 					i += 5;
 					break;
 				case 0x54:
@@ -163,7 +165,7 @@ int main(int argc, char** argv) {
 						return 0;
 					}
 					printf("note = %d length = %f ", note, dt*60.0/(inp_midi.PPQN*bpm));
-					fprintf(out_file, "%f, %f, ", 1.0*freq[note], dt*60000.0/(inp_midi.PPQN*bpm));
+					fprintf(out_file, "%" PRIu8 ", % " PRIu8 ", ", freq[note], dt);
 					prevCom = 1;
 				}
 				i += 3;
